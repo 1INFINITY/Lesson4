@@ -49,17 +49,22 @@ class MainActivity : AppCompatActivity() {
 
     private fun initSimulationWorkOnThread() {
         val lock = java.lang.Object()
+        var counter = 0
         binding.btnMirea.setOnClickListener {
-            val endTime = System.currentTimeMillis() + 20 * 1000
-            while (System.currentTimeMillis() < endTime) {
-                synchronized(lock) {
-                    try {
-                        lock.wait(endTime - System.currentTimeMillis())
-                    } catch (e: Exception) {
-                        throw RuntimeException(e)
+            Thread {
+                val numberThread: Int = counter++
+                val endTime = System.currentTimeMillis() + 20 * 1000
+                while (System.currentTimeMillis() < endTime) {
+                    synchronized(lock) {
+                        try {
+                            lock.wait(endTime - System.currentTimeMillis())
+                        } catch (e: Exception) {
+                            throw RuntimeException(e)
+                        }
                     }
                 }
-            }
+                Log.d("ThreadProject", "Выполнен поток No $numberThread");
+            }.start()
         }
     }
 }
